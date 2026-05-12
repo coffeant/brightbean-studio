@@ -1,8 +1,8 @@
 {% extends "layouts/settings.html" %}
-{% block title %}General - Settings - Brightbean{% endblock %}
+{% block title %}通用 - 设置 - Brightbean{% endblock %}
 {% block content %}
 <div class="max-w-2xl">
-    <h2 class="text-xl font-semibold mb-8" style="color: var(--text-primary);">General</h2>
+    <h2 class="text-xl font-semibold mb-8" style="color: var(--text-primary);">通用</h2>
 
     <!-- Organization Name section -->
     <form method="POST" class="mb-10">
@@ -10,7 +10,7 @@
         <input type="hidden" name="action" value="update_name">
         <div class="flex items-end gap-4">
             <div class="flex-1">
-                <label for="name" class="block text-sm font-semibold mb-2" style="color: var(--text-primary);">Organization Name</label>
+                <label for="name" class="block text-sm font-semibold mb-2" style="color: var(--text-primary);">组织名称</label>
                 <input type="text" id="name" name="name" value="{{ organization.name }}" required maxlength="100"
                        class="input-focus w-full px-3 py-2 text-sm rounded-lg outline-none transition-colors"
                        style="border: 1px solid var(--border); color: var(--text-primary); background: var(--surface-0);">
@@ -18,7 +18,7 @@
             <button type="submit"
                     class="btn-neutral px-5 py-2 text-sm font-medium rounded-full cursor-pointer whitespace-nowrap"
                     style="background: var(--neutral-100); color: var(--text-primary);">
-                Save Changes
+                保存更改
             </button>
         </div>
     </form>
@@ -29,17 +29,17 @@
         <input type="hidden" name="action" value="update_timezone">
         <div class="flex items-end gap-4">
             <div class="flex-1">
-                <label for="timezone" class="block text-sm font-semibold mb-1" style="color: var(--text-primary);">Default Timezone</label>
-                <p class="text-xs mb-2" style="color: var(--text-tertiary);">Used as the fallback for workspaces that don't set their own.</p>
+                <label for="timezone" class="block text-sm font-semibold mb-1" style="color: var(--text-primary);">默认时区</label>
+                <p class="text-xs mb-2" style="color: var(--text-tertiary);">用作未设置时区的工作区的回退值。</p>
                 <select id="timezone" name="timezone"
                         class="input-focus w-full px-3 py-2 text-sm rounded-lg outline-none transition-colors"
                         style="border: 1px solid var(--border); color: var(--text-primary); background: var(--surface-0);">
-                    <optgroup label="Common">
+                    <optgroup label="常用">
                         {% for tz in common_timezones %}
                         <option value="{{ tz }}" {% if tz == organization.default_timezone %}selected{% endif %}>{{ tz }}</option>
                         {% endfor %}
                     </optgroup>
-                    <optgroup label="All Timezones">
+                    <optgroup label="所有时区">
                         {% for tz in all_timezones %}
                         <option value="{{ tz }}" {% if tz == organization.default_timezone %}selected{% endif %}>{{ tz }}</option>
                         {% endfor %}
@@ -49,7 +49,7 @@
             <button type="submit"
                     class="btn-neutral px-5 py-2 text-sm font-medium rounded-full cursor-pointer whitespace-nowrap"
                     style="background: var(--neutral-100); color: var(--text-primary);">
-                Save Changes
+                保存更改
             </button>
         </div>
     </form>
@@ -65,10 +65,10 @@
          style="background: var(--error-soft, #FEE2E2); border: 1px solid var(--error-500, #EF4444);">
         <div class="flex items-start justify-between gap-4">
             <div>
-                <h3 class="text-sm font-semibold mb-1" style="color: var(--error-500, #EF4444);">Deletion scheduled</h3>
+                <h3 class="text-sm font-semibold mb-1" style="color: var(--error-500, #EF4444);">已安排删除</h3>
                 <p class="text-sm" style="color: var(--text-secondary);">
-                    This organization is scheduled for deletion on <strong>{{ organization.deletion_scheduled_for|date:"F j, Y" }}</strong>.
-                    All workspaces, posts, social accounts, media, and team data will be permanently removed after this date.
+                    此组织计划于 <strong>{{ organization.deletion_scheduled_for|date:"F j, Y" }}</strong> 删除。
+                    在此日期后，所有工作区、内容、社交媒体账号、媒体和团队数据将被永久删除。
                 </p>
             </div>
             <div class="flex flex-col gap-3 shrink-0">
@@ -78,13 +78,13 @@
                     <button type="submit"
                             class="btn-neutral px-5 py-2 text-sm font-medium rounded-full cursor-pointer whitespace-nowrap"
                             style="background: var(--neutral-100); color: var(--text-primary);">
-                        Cancel Deletion
+                            取消删除
                     </button>
                 </form>
                 <button type="button" @click="showImmediateDeleteModal = true"
                         class="btn-opacity px-5 py-2 text-sm font-medium rounded-full cursor-pointer whitespace-nowrap"
                         style="background: var(--error-500, #EF4444); color: white;">
-                    Delete Now
+                    立即删除
                 </button>
             </div>
         </div>
@@ -103,7 +103,7 @@
 
                     <!-- Header -->
                     <div class="flex items-center justify-between px-6 py-4" style="border-bottom: 1px solid var(--border);">
-                        <h3 class="text-base font-semibold" style="color: var(--text-primary);">Delete immediately?</h3>
+                        <h3 class="text-base font-semibold" style="color: var(--text-primary);">立即删除？</h3>
                         <button type="button" @click="showImmediateDeleteModal = false" class="cursor-pointer" style="color: var(--text-tertiary);">
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         </button>
@@ -112,17 +112,17 @@
                     <!-- Body -->
                     <div class="px-6 py-5">
                         <p class="text-sm mb-3" style="color: var(--text-secondary);">
-                            This will permanently delete <strong>{{ organization.name }}</strong> right now, bypassing the 14-day grace period. This action cannot be undone.
+                            这将立即永久删除 <strong>{{ organization.name }}</strong>，绕过 14 天宽限期。此操作无法撤销。
                         </p>
                         <p class="text-sm" style="color: var(--text-secondary);">
-                            All of the following will be permanently removed:
+                            以下内容将被永久删除：
                         </p>
                         <ul class="text-sm mt-2 ml-4 list-disc space-y-1" style="color: var(--text-secondary);">
-                            <li>All workspaces and their settings</li>
-                            <li>All scheduled and published posts</li>
-                            <li>Connected social accounts and credentials</li>
-                            <li>Media assets and files</li>
-                            <li>Team memberships and invitations</li>
+                            <li>所有工作区及其设置</li>
+                            <li>所有已排期和已发布的内容</li>
+                            <li>已关联的社交媒体账号和凭证</li>
+                            <li>媒体资产和文件</li>
+                            <li>团队成员资格和邀请</li>
                         </ul>
                     </div>
 
@@ -131,7 +131,7 @@
                         <button type="button" @click="showImmediateDeleteModal = false"
                                 class="btn-neutral px-5 py-2 text-sm font-medium rounded-full cursor-pointer"
                                 style="background: var(--neutral-100); color: var(--text-primary);">
-                            Cancel
+                            取消
                         </button>
                         <form method="POST">
                             {% csrf_token %}
@@ -139,7 +139,7 @@
                             <button type="submit"
                                     class="btn-opacity px-5 py-2 text-sm font-semibold rounded-full cursor-pointer whitespace-nowrap"
                                     style="background: var(--error-500, #EF4444); color: white;">
-                                Yes, delete permanently
+                                是，立即永久删除
                             </button>
                         </form>
                     </div>
@@ -152,9 +152,9 @@
     <div x-data="{ showDeleteModal: false }">
         <div class="flex items-start justify-between gap-4">
             <div>
-                <h3 class="text-base font-semibold mb-1" style="color: var(--text-primary);">Delete this organization</h3>
+                <h3 class="text-base font-semibold mb-1" style="color: var(--text-primary);">删除此组织</h3>
                 <p class="text-sm" style="color: var(--text-secondary); max-width: 480px;">
-                    Permanently delete this organization and all of its data. This includes all workspaces, scheduled posts, social accounts, media assets, and team memberships.
+                    永久删除此组织及其所有数据，包括所有工作区、已排期内容、社交媒体账号、媒体资产和团队成员资格。
                 </p>
             </div>
 

@@ -1,12 +1,12 @@
-Daily Notification Digest - {{ date|date:"N j, Y" }}
-{{ notifications|length }} notification{{ notifications|length|pluralize }}
+每日通知摘要 - {{ date|date:"N j, Y" }}
+共 {{ notifications|length }} 条通知
 
 {% for n in notifications %}
-- {{ n.title }}{% if n.body %}: {{ n.body|truncatewords:20 }}{% endif %} ({{ n.created_at|timesince }} ago)
+- {{ n.title }}{% if n.body %}: {{ n.body|truncatewords:20 }}{% endif %} ({{ n.created_at|timesince }}前)
 {% endfor %}
 
-View all: {{ app_url }}/notifications/
+查看全部：{{ app_url }}/notifications/
 
 ---
-You're receiving this daily digest.
-Manage preferences: {{ app_url }}/notifications/preferences/
+您收到此每日摘要邮件。
+管理偏好设置：{{ app_url }}/notifications/preferences/

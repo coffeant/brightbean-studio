@@ -8,12 +8,12 @@
         <button @click="mode = 'reply'"
                 class="text-[12px] font-semibold px-3 py-1 rounded-full transition-all"
                 :class="mode === 'reply' ? 'bg-white text-stone-900 shadow-sm border border-stone-200' : 'text-stone-500 hover:text-stone-700'">
-            Reply
+            回复
         </button>
         <button @click="mode = 'note'"
                 class="text-[12px] font-semibold px-3 py-1 rounded-full transition-all"
                 :class="mode === 'note' ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'text-stone-500 hover:text-stone-700'">
-            Internal Note
+            内部备注
         </button>
 
         <!-- Saved replies dropdown -->
@@ -22,7 +22,7 @@
             <button @click="srOpen = !srOpen"
                     class="text-[11px] font-medium text-stone-500 hover:text-stone-700 flex items-center gap-1 transition-colors">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
-                Saved Replies
+                已保存回复
             </button>
             <div x-show="srOpen" @click.away="srOpen = false" x-cloak x-transition
                  class="absolute right-0 bottom-full mb-1 bg-white rounded-lg shadow-lg ring-1 ring-stone-200 py-1 z-50 min-w-[200px] max-h-[200px] overflow-y-auto">
@@ -47,19 +47,19 @@
             {% csrf_token %}
             <textarea name="body"
                       x-model="replyText"
-                      placeholder="Write a reply..."
+                      placeholder="写回复..."
                       rows="2"
                       class="w-full px-3 py-2 text-[13px] bg-white border border-stone-200 rounded-lg resize-none focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all"
                       required></textarea>
             <div class="flex items-center justify-between mt-2">
-                <p class="text-[10px] text-stone-400">Reply will be posted on {{ message.social_account.get_platform_display|default:message.social_account.platform|title }}</p>
+                <p class="text-[10px] text-stone-400">回复将发布到 {{ message.social_account.get_platform_display|default:message.social_account.platform|title }}</p>
                 <button type="submit"
                         class="inline-flex items-center gap-1.5 px-4 py-1.5 text-[12px] font-semibold text-white rounded-full transition-all duration-150 cursor-pointer"
                         style="background: var(--primary); box-shadow: var(--shadow-primary);"
                         onmouseover="this.style.background='var(--primary-hover)'"
                         onmouseout="this.style.background='var(--primary)'">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                    Send Reply
+                    发送回复
                 </button>
             </div>
         </form>
@@ -74,7 +74,7 @@
             {% csrf_token %}
             <textarea name="body"
                       x-model="noteText"
-                      placeholder="Add an internal note (only visible to your team)..."
+                      placeholder="添加内部备注（仅团队成员可见）..."
                       rows="2"
                       class="w-full px-3 py-2 text-[13px] bg-amber-50 border border-amber-200 rounded-lg resize-none focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all"
                       required></textarea>
@@ -82,7 +82,7 @@
                 <button type="submit"
                         class="inline-flex items-center gap-1.5 px-4 py-1.5 text-[12px] font-semibold text-amber-800 bg-amber-100 border border-amber-200 rounded-full hover:bg-amber-200 transition-all duration-150 cursor-pointer">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                    Add Note
+                    添加备注
                 </button>
             </div>
         </form>

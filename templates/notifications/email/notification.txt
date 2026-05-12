@@ -2,8 +2,8 @@
 
 {{ notification.body }}
 
-{% if notification.data.action_url %}View details: {{ notification.data.action_url }}{% endif %}
+{% if notification.data.action_url %}查看详情：{{ notification.data.action_url }}{% endif %}
 
 ---
-You received this because of your notification settings.
-Manage preferences: {{ app_url }}/notifications/preferences/
+您收到此通知是由于您的通知设置。
+管理偏好设置：{{ app_url }}/notifications/preferences/

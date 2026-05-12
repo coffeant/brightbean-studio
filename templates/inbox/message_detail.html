@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize %}
 
-{% block title %}{{ message.sender_name }} - Inbox - {{ workspace.name }} - Brightbean{% endblock %}
+{% block title %}{{ message.sender_name }} - 收件箱 - {{ workspace.name }} - Brightbean{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -42,8 +42,8 @@
         const deadline = new Date(new Date(receivedAt).getTime() + this.slaTarget * 60000);
         const diff = deadline - new Date();
         const mins = Math.floor(Math.abs(diff) / 60000);
-        if (diff < 0) return mins < 60 ? mins + 'm overdue' : Math.floor(mins/60) + 'h overdue';
-        return mins < 60 ? mins + 'm left' : Math.floor(mins/60) + 'h ' + (mins%60) + 'm left';
+        if (diff < 0) return mins < 60 ? mins + '分钟前超时' : Math.floor(mins/60) + '小时前超时';
+        return mins < 60 ? mins + '分钟剩余' : Math.floor(mins/60) + '小时 ' + (mins%60) + '分钟剩余';
     }
 }">
     <!-- Back link -->
@@ -51,7 +51,7 @@
         <a href="{% url 'inbox:feed' workspace_id=workspace.id %}"
            class="inline-flex items-center gap-1.5 text-[13px] font-medium text-stone-500 hover:text-stone-700 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-            Back to Inbox
+            返回收件箱
         </a>
     </div>
     <div id="inbox-detail-panel" class="flex-1" style="height: calc(100% - 41px);">

@@ -1,10 +1,10 @@
-{% load account %}{% autoescape off %}{% user_display user as user_display %}Hi {{ user_display }},
+{% load account %}{% autoescape off %}{% user_display user as user_display %}您好 {{ user_display }},
 
-Please confirm this email address for your Brightbean Studio account by clicking the link below:
+请点击下面的链接确认此邮箱地址属于您的 Brightbean Studio 账号：
 
 {{ activate_url }}
 
-If you didn't add this email, you can safely ignore this message.
+如果您没有添加此邮箱，请忽略此邮件。
 
-— The Brightbean team
+— Brightbean 团队
 {% endautoescape %}

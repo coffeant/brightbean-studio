@@ -16,7 +16,7 @@
                     {{ member.user.display_name }}
                 </span>
                 {% if member.user.id == current_user.id %}
-                <span class="text-xs px-1.5 py-0.5 rounded" style="background: var(--neutral-100); color: var(--text-tertiary);">you</span>
+                <span class="text-xs px-1.5 py-0.5 rounded" style="background: var(--neutral-100); color: var(--text-tertiary);">你</span>
                 {% endif %}
             </div>
             <div class="text-xs truncate" style="color: var(--text-tertiary);">{{ member.user.email }}</div>
@@ -25,11 +25,11 @@
         <!-- Org Role Badge -->
         <div class="flex-shrink-0">
             {% if member.membership.org_role == "owner" %}
-            <span class="text-xs font-medium px-2.5 py-1 rounded-full" style="background: #FEF3C7; color: #92400E;">Owner</span>
+            <span class="text-xs font-medium px-2.5 py-1 rounded-full" style="background: #FEF3C7; color: #92400E;">所有者</span>
             {% elif member.membership.org_role == "admin" %}
-            <span class="text-xs font-medium px-2.5 py-1 rounded-full" style="background: #DBEAFE; color: #1E40AF;">Admin</span>
+            <span class="text-xs font-medium px-2.5 py-1 rounded-full" style="background: #DBEAFE; color: #1E40AF;">管理员</span>
             {% else %}
-            <span class="text-xs font-medium px-2.5 py-1 rounded-full" style="background: var(--neutral-100); color: var(--text-secondary);">Member</span>
+            <span class="text-xs font-medium px-2.5 py-1 rounded-full" style="background: var(--neutral-100); color: var(--text-secondary);">成员</span>
             {% endif %}
         </div>
 
@@ -54,7 +54,7 @@
                       hx-swap="outerHTML"
                       class="px-3 py-2" style="border-bottom: 1px solid var(--border);">
                     {% csrf_token %}
-                    <label class="text-xs font-medium block mb-1" style="color: var(--text-secondary);">Organization Role</label>
+                    <label class="text-xs font-medium block mb-1" style="color: var(--text-secondary);">组织角色</label>
                     <div class="flex gap-2">
                         <select name="org_role" class="text-xs flex-1 px-2 py-1 rounded border outline-none"
                                 style="border-color: var(--border); background: var(--surface-0); color: var(--text-primary);">
@@ -65,7 +65,7 @@
                         <button type="submit"
                                 class="text-xs px-2 py-1 rounded font-medium cursor-pointer"
                                 style="background: var(--neutral-100); color: var(--text-primary);">
-                            Save
+                            保存
                         </button>
                     </div>
                 </form>
@@ -76,19 +76,19 @@
                         hx-target="#ws-modal-content"
                         class="btn-neutral-surface w-full text-left px-3 py-2 text-sm cursor-pointer transition-colors"
                         style="color: var(--text-primary);">
-                    Manage Workspaces
+                    管理工作空间
                 </button>
 
                 <!-- Remove Member -->
                 <form hx-post="{% url 'members:remove' membership_id=member.membership.id %}"
                       hx-target="#member-{{ member.membership.id }}"
                       hx-swap="delete"
-                      hx-confirm="Remove {{ member.user.display_name }} from the organization? This will also remove them from all workspaces.">
+                      hx-confirm="确定将 {{ member.user.display_name }} 从组织中移除？此操作也会将其从所有工作空间中移除。">
                     {% csrf_token %}
                     <button type="submit"
                             class="btn-danger-soft-bg w-full text-left px-3 py-2 text-sm cursor-pointer transition-colors"
                             style="color: #DC2626;">
-                        Remove from Organization
+                        从组织移除
                     </button>
                 </form>
             </div>
@@ -124,14 +124,14 @@
                  style="background: var(--surface-0);">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-base font-semibold" style="color: var(--text-primary);">
-                        Workspaces - {{ member.user.display_name }}
+                        工作空间 - {{ member.user.display_name }}
                     </h3>
                     <button @click="showWorkspaces = false" class="cursor-pointer" style="color: var(--text-tertiary);">
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
                 </div>
                 <div id="ws-modal-content">
-                    <p class="text-sm" style="color: var(--text-tertiary);">Loading...</p>
+                    <p class="text-sm" style="color: var(--text-tertiary);">加载中...</p>
                 </div>
             </div>
         </div>
