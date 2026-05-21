@@ -10,6 +10,8 @@ from apps.notifications.models import EventType
 from apps.social_accounts.models import SocialAccount
 from providers import get_provider
 
+from background_task import background
+
 from .models import InboxMessage, InboxSLAConfig
 from .sentiment import analyze_sentiment
 
@@ -45,6 +47,12 @@ class InboxSyncEngine:
             .values_list("received_at", flat=True)
             .first()
         )
+
+        # Enable auto-refresh on 401 for platforms that support it
+        refresh_token = account.oauth_refresh_token or (
+            account.oauth_access_token if account.platform in ("facebook", "instagram", "instagram_login", "threads") else None
+        )
+        provider.set_refresh_token(refresh_token)
 
         try:
             messages = provider.get_messages(
@@ -149,3 +157,10 @@ class InboxSyncEngine:
                     "workspace_id": str(message.workspace_id),
                 },
             )
+
+
+@background(schedule=0)
+def run_inbox_sync_all():
+    """Recurring background task to sync all inbox messages."""
+    engine = InboxSyncEngine()
+    engine.sync_all()

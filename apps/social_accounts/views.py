@@ -3,6 +3,8 @@
 Handles OAuth flows, account listing, connect/reconnect/disconnect actions.
 """
 
+import base64
+import hashlib
 import logging
 import secrets
 from datetime import timedelta
@@ -251,6 +253,19 @@ def connect_platform(request, workspace_id):
         "platform": platform,
     }
 
+    # TikTok OAuth v2 requires PKCE (Proof Key for Code Exchange)
+    if platform == PlatformCredential.Platform.TIKTOK:
+        code_verifier = secrets.token_urlsafe(64)
+        code_challenge = base64.urlsafe_b64encode(
+            hashlib.sha256(code_verifier.encode()).digest()
+        ).rstrip(b"=").decode()
+        request.session[OAUTH_SESSION_KEY]["code_verifier"] = code_verifier
+        provider = _get_provider_for_platform(
+            platform, request.org.id,
+            code_verifier=code_verifier,
+            code_challenge=code_challenge,
+        )
+
     redirect_uri = _build_redirect_uri(request, platform)
     auth_url = provider.get_auth_url(redirect_uri, state)
     return redirect(auth_url)
@@ -323,6 +338,10 @@ def oauth_callback(request, platform):
         if platform == PlatformCredential.Platform.MASTODON:
             extra_creds = _resolve_mastodon_extra_creds(session_data)
 
+        # TikTok needs the code_verifier for PKCE token exchange
+        if platform == PlatformCredential.Platform.TIKTOK:
+            extra_creds["code_verifier"] = session_data.get("code_verifier", "")
+
         provider = _get_provider_for_platform(platform, request.org.id, **extra_creds)
         redirect_uri = _build_redirect_uri(request, platform)
         tokens = provider.exchange_code(code, redirect_uri)
@@ -343,6 +362,7 @@ def oauth_callback(request, platform):
                         "access_token": tokens.access_token,
                         "refresh_token": tokens.refresh_token,
                     },
+                    "expires_in": tokens.expires_in,
                     "pages": pages,
                 }
                 return redirect("social_accounts:select_account")
@@ -442,8 +462,8 @@ def select_account(request):
                 platform=platform,
                 profile=profile,
                 access_token=page.get("access_token", user_tokens["access_token"]),
-                refresh_token=user_tokens.get("refresh_token"),
-                expires_in=None,
+                refresh_token=user_tokens["access_token"],
+                expires_in=page_data.get("expires_in"),
             )
             connected.append(page["name"])
 

@@ -121,7 +121,7 @@
               lg:relative lg:z-auto lg:translate-x-0"
        :class="folderSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
        @click="if (window.innerWidth < 1024 && $event.target.closest('a')) { folderSidebarOpen = false }">
-    <div class="p-4">
+    <div class="p-4 pt-[30px] pl-[30px]">
       <div class="flex items-center justify-between mb-3">
         <span class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-tertiary, #78716C);">文件夹</span>
         <button @click="showNewFolder = true"
@@ -155,11 +155,6 @@
            hx-target="#folder-tree">
         {% include "media_library/_folder_tree.html" %}
       </div>
-
-      <!-- New folder form -->
-      <div x-show="showNewFolder" x-cloak class="mt-2">
-        {% include "media_library/_folder_form.html" %}
-      </div>
     </div>
   </div>
 
@@ -167,7 +162,7 @@
   <div class="flex-1 flex flex-col overflow-hidden">
 
     <!-- ── Toolbar ── -->
-    <div class="flex flex-wrap items-center gap-2 sm:gap-3 px-3 sm:px-4 lg:px-6 py-3 border-b rounded-tr-xl" style="border-color: var(--border, #E7E5E4); background: var(--surface-0, #FFF);">
+    <div class="flex flex-wrap items-center gap-2 sm:gap-3 px-3 sm:px-4 lg:px-6 py-3 mt-5 border-b rounded-tr-xl" style="border-color: var(--border, #E7E5E4); background: var(--surface-0, #FFF);">
 
       <!-- Search -->
       <div class="relative flex-1 min-w-[160px] sm:max-w-sm">
@@ -292,6 +287,11 @@
         {% include "media_library/_asset_grid.html" %}
       </div>
     </div>
+  </div>
+
+  <!-- New folder form (outside sidebar to avoid transform containment) -->
+  <div x-show="showNewFolder" x-cloak>
+    {% include "media_library/_folder_form.html" %}
   </div>
 
   <!-- ═══════ DETAIL SLIDE-OVER ═══════ -->

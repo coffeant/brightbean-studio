@@ -443,8 +443,8 @@ Brightbean Studio supports two LinkedIn paths. Pick whichever your LinkedIn dev 
    {APP_URL}/social-accounts/callback/linkedin_company/
    ```
 5. Scopes:
-   - **Personal:** `r_basicprofile`, `w_member_social`, `r_member_social`
-   - **Company:** `r_basicprofile`, `w_member_social`, `w_organization_social`, `r_organization_social`, `rw_organization_admin`
+- **Personal:** `openid`, `profile`, `email`, `w_member_social`, `r_member_social`
+- **Company:** `openid`, `profile`, `email`, `w_member_social`, `w_organization_social`, `r_organization_social`, `rw_organization_admin`
 6. Set the environment variables:
    ```
    PLATFORM_LINKEDIN_COMPANY_CLIENT_ID=your-client-id

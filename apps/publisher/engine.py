@@ -276,11 +276,27 @@ class PublishEngine:
         credentials = _resolve_publish_credentials(account)
         provider = get_provider(platform, credentials)
 
+        # Enable auto-refresh on 401 as a safety net.
+        # For FB/IG/Threads pages: use the page access token (account.oauth_access_token)
+        # for fb_exchange_token, NOT the user-level token stored in oauth_refresh_token.
+        if platform in ("facebook", "instagram", "instagram_login", "threads"):
+            refresh_token = account.oauth_access_token
+        else:
+            refresh_token = account.oauth_refresh_token
+        provider.set_refresh_token(refresh_token)
+
         # Refresh token if expired or expiring soon (OAuth2 providers only)
         access_token = account.oauth_access_token
         if account.token_expires_at and account.is_token_expiring_soon and provider.auth_type == AuthType.OAUTH2:
             try:
-                new_tokens = provider.refresh_token(account.oauth_refresh_token)
+                if platform in ("facebook", "instagram", "instagram_login", "threads"):
+                    token_to_refresh = account.oauth_access_token
+                else:
+                    token_to_refresh = account.oauth_refresh_token
+                if not token_to_refresh:
+                    logger.warning("No token to refresh for %s", account)
+                    return _publish_result(account, SubmissionStatus.FAILED, "Token expired, please reconnect account")
+                new_tokens = provider.refresh_token(token_to_refresh)
                 account.oauth_access_token = new_tokens.access_token
                 if new_tokens.refresh_token:
                     account.oauth_refresh_token = new_tokens.refresh_token
@@ -421,6 +437,17 @@ class PublishEngine:
                 len(media_files),
             )
             result = provider.publish_post(access_token, content)
+
+            # Persist tokens if auto-refresh happened during the request
+            refreshed = provider.get_last_refreshed_tokens()
+            if refreshed:
+                account.oauth_access_token = refreshed.access_token
+                if refreshed.refresh_token:
+                    account.oauth_refresh_token = refreshed.refresh_token
+                if refreshed.expires_in:
+                    account.token_expires_at = timezone.now() + timedelta(seconds=refreshed.expires_in)
+                account.save(update_fields=["oauth_access_token", "oauth_refresh_token", "token_expires_at", "updated_at"])
+
             return {
                 "success": True,
                 "platform_post_id": result.platform_post_id,

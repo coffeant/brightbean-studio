@@ -41,15 +41,11 @@ class LinkedInPersonalProvider(LinkedInProvider):
     def required_scopes(self) -> list[str]:
         if self._is_oidc_mode:
             return ["openid", "profile", "email", "w_member_social"]
-        return ["r_basicprofile", "w_member_social", "r_member_social"]
+        return ["openid", "profile", "email", "w_member_social"]
 
     def get_profile(self, access_token: str) -> AccountProfile:
-        if not self._is_oidc_mode:
-            return super().get_profile(access_token)
-        # LinkedIn's OIDC discovery declares pairwise subject types, but the
-        # `sub` claim is empirically the member's Person ID - `urn:li:person:{sub}`
-        # works as the post author URN. Every third-party LinkedIn integration
-        # relies on this; if LinkedIn ever enforces pairwise, posting breaks.
+        # OIDC /v2/userinfo is used for both OIDC and community_management modes,
+        # since the legacy r_basicprofile scope is no longer available.
         resp = self._request("GET", f"{API_BASE}/v2/userinfo", access_token=access_token)
         data = resp.json()
         return AccountProfile(

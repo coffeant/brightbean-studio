@@ -41,6 +41,8 @@ class SocialProvider(ABC):
 
     def __init__(self, credentials: dict | None = None):
         self.credentials = credentials or {}
+        self._refresh_token: str | None = None
+        self._last_refreshed_tokens: OAuthTokens | None = None
 
     # ------------------------------------------------------------------
     # Class-level metadata (abstract properties)
@@ -80,6 +82,20 @@ class SocialProvider(ABC):
     def rate_limits(self) -> RateLimitConfig:
         """Platform rate limit configuration."""
         return RateLimitConfig()
+
+    # ------------------------------------------------------------------
+    # Auto-refresh helpers
+    # ------------------------------------------------------------------
+
+    def set_refresh_token(self, refresh_token: str | None) -> None:
+        """Set the refresh token for automatic 401 retry in _request."""
+        self._refresh_token = refresh_token
+
+    def get_last_refreshed_tokens(self) -> OAuthTokens | None:
+        """Return and clear any tokens obtained from an auto-refresh."""
+        tokens = self._last_refreshed_tokens
+        self._last_refreshed_tokens = None
+        return tokens
 
     # ------------------------------------------------------------------
     # OAuth methods (override for OAuth providers)
@@ -201,6 +217,17 @@ class SocialProvider(ABC):
             else:
                 request_kwargs["data"] = data
             response = client.request(method, url, **request_kwargs)
+
+        # Auto-refresh on 401 when a refresh token is available
+        if response.status_code == 401 and self._refresh_token:
+            try:
+                new_tokens = self.refresh_token(self._refresh_token)
+                self._last_refreshed_tokens = new_tokens
+                req_headers["Authorization"] = f"Bearer {new_tokens.access_token}"
+                request_kwargs["headers"] = req_headers
+                response = client.request(method, url, **request_kwargs)
+            except Exception:
+                pass  # keep the original 401 response
 
         if response.status_code == 429:
             retry_after = response.headers.get("Retry-After")

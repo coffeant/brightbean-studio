@@ -86,20 +86,22 @@ class TikTokProvider(SocialProvider):
             "scope": ",".join(self.required_scopes),
             "response_type": "code",
         }
+        if "code_challenge" in self.credentials:
+            params["code_challenge"] = self.credentials["code_challenge"]
+            params["code_challenge_method"] = "S256"
         return f"{AUTH_URL}?{urlencode(params)}"
 
     def exchange_code(self, code: str, redirect_uri: str) -> OAuthTokens:
-        resp = self._request(
-            "POST",
-            TOKEN_URL,
-            data={
-                "client_key": self.credentials["client_key"],
-                "client_secret": self.credentials["client_secret"],
-                "code": code,
-                "grant_type": "authorization_code",
-                "redirect_uri": redirect_uri,
-            },
-        )
+        data: dict = {
+            "client_key": self.credentials["client_key"],
+            "client_secret": self.credentials["client_secret"],
+            "code": code,
+            "grant_type": "authorization_code",
+            "redirect_uri": redirect_uri,
+        }
+        if "code_verifier" in self.credentials:
+            data["code_verifier"] = self.credentials["code_verifier"]
+        resp = self._request("POST", TOKEN_URL, data=data)
         body = resp.json()
         if "access_token" not in body:
             raise OAuthError(

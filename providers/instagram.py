@@ -79,6 +79,9 @@ class InstagramProvider(SocialProvider):
     @property
     def required_scopes(self) -> list[str]:
         return [
+            "pages_show_list",
+            "pages_read_engagement",
+            "pages_manage_metadata",
             "instagram_basic",
             "instagram_content_publish",
             "instagram_manage_comments",
@@ -105,6 +108,9 @@ class InstagramProvider(SocialProvider):
             "state": state,
             "scope": ",".join(self.required_scopes),
             "response_type": "code",
+            # Required by Facebook for Instagram Business Login
+            "display": "page",
+            "extras": '{"setup":{"channel":"IG_API_ONBOARDING"}}',
         }
         return f"{OAUTH_URL}?{urlencode(params)}"
 

@@ -1,0 +1,29 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - img "Brightbean logo" [ref=e6]
+      - heading "欢迎回来" [level=1] [ref=e7]
+      - paragraph [ref=e8]: 登录您的 Brightbean Studio 账号
+    - generic [ref=e9]:
+      - button "使用 Google 继续" [ref=e12] [cursor=pointer]:
+        - img [ref=e13]
+        - generic [ref=e18]: 使用 Google 继续
+      - generic [ref=e19]: 或者
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - generic [ref=e22]: Email
+          - textbox "Email" [ref=e23]:
+            - /placeholder: Email address
+        - generic [ref=e24]:
+          - generic [ref=e25]: Password
+          - textbox "Password" [ref=e26]
+        - generic [ref=e28] [cursor=pointer]:
+          - checkbox "Remember Me" [ref=e29]
+          - text: Remember Me
+        - link "忘记密码？" [ref=e31] [cursor=pointer]:
+          - /url: /accounts/password/reset/
+        - button "登录" [ref=e32] [cursor=pointer]
+    - paragraph [ref=e33]:
+      - text: 还没有账号？
+      - link "注册" [ref=e34] [cursor=pointer]:
+        - /url: /accounts/signup/

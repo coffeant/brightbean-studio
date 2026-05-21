@@ -64,6 +64,7 @@ LOCAL_APPS = [
     "apps.approvals",
     "apps.client_portal",
     "apps.onboarding",
+    "apps.agents",
     "theme",
 ]
 
@@ -192,6 +193,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Sites framework
 SITE_ID = 1
+
+# OpenAI / AI Agent
+OPENAI_API_KEY = env("OPENAI_API_KEY", default="")
+OPENAI_MODEL = env("OPENAI_MODEL", default="gpt-4o-mini")
+OPENAI_BASE_URL = env("OPENAI_BASE_URL", default="")
 
 # django-allauth
 ACCOUNT_LOGIN_METHODS = {"email"}

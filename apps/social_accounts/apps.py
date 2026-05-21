@@ -23,11 +23,16 @@ class SocialAccountsConfig(AppConfig):
 
             from apps.social_accounts.tasks import schedule_all_health_checks
 
-            if not Task.objects.filter(verbose_name="schedule_all_health_checks").exists():
-                schedule_all_health_checks(
-                    repeat=6 * 3600,
-                    verbose_name="schedule_all_health_checks",
-                )
-                logger.info("Registered recurring health-check task (every 6h)")
+            task, created = Task.objects.update_or_create(
+                verbose_name="schedule_all_health_checks",
+                defaults={
+                    "task_name": "apps.social_accounts.tasks.schedule_all_health_checks",
+                    "repeat": 900,
+                },
+            )
+            if created:
+                logger.info("Registered recurring health-check task (every 15min)")
+            else:
+                logger.info("Updated recurring health-check task repeat to 15min")
         except Exception:
             logger.debug("Skipping health-check task registration (database not ready)")

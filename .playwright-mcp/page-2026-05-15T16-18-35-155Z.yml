@@ -1,0 +1,34 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - img "Brightbean Studio logo" [ref=e6]
+      - heading "创建您的账号" [level=1] [ref=e7]
+      - paragraph [ref=e8]: 几分钟内开始管理您的社交媒体
+    - generic [ref=e9]:
+      - button "使用 Google 继续" [ref=e12] [cursor=pointer]:
+        - img [ref=e13]
+        - generic [ref=e18]: 使用 Google 继续
+      - generic [ref=e19]: 或者
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - generic [ref=e22]: Email
+          - textbox "Email" [ref=e23]:
+            - /placeholder: Email address
+        - generic [ref=e24]:
+          - generic [ref=e25]: Password
+          - textbox "Password" [ref=e26]
+          - list [ref=e28]:
+            - listitem [ref=e29]: Your password must contain at least 8 characters.
+        - button "创建账号" [ref=e31] [cursor=pointer]
+      - paragraph [ref=e32]:
+        - text: 注册即表示您同意我们的
+        - link "服务条款" [ref=e33] [cursor=pointer]:
+          - /url: https://brightbean.xyz/terms-of-service/
+        - text: 和
+        - link "隐私政策" [ref=e34] [cursor=pointer]:
+          - /url: https://brightbean.xyz/privacy-policy/
+        - text: 。
+    - paragraph [ref=e35]:
+      - text: 已有账号？
+      - link "登录" [ref=e36] [cursor=pointer]:
+        - /url: /accounts/login/

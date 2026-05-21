@@ -7,7 +7,8 @@ Company Pages the authenticated member administers via
 
 from __future__ import annotations
 
-from .linkedin import LinkedInProvider
+from .linkedin import API_BASE, LinkedInProvider
+from .types import AccountProfile
 
 
 class LinkedInCompanyProvider(LinkedInProvider):
@@ -20,9 +21,21 @@ class LinkedInCompanyProvider(LinkedInProvider):
     @property
     def required_scopes(self) -> list[str]:
         return [
-            "r_basicprofile",
+            "openid",
+            "profile",
+            "email",
             "w_member_social",
             "w_organization_social",
             "r_organization_social",
             "rw_organization_admin",
         ]
+
+    def get_profile(self, access_token: str) -> AccountProfile:
+        resp = self._request("GET", f"{API_BASE}/v2/userinfo", access_token=access_token)
+        data = resp.json()
+        return AccountProfile(
+            platform_id=data.get("sub", ""),
+            name=data.get("name", ""),
+            avatar_url=data.get("picture"),
+            extra=data,
+        )

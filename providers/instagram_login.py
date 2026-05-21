@@ -116,8 +116,6 @@ class InstagramLoginProvider(SocialProvider):
             "state": state,
             "scope": ",".join(self.required_scopes),
             "response_type": "code",
-            "enable_fb_login": "0",
-            "force_authentication": "1",
         }
         return f"{AUTH_URL}?{urlencode(params)}"
 

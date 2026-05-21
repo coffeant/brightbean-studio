@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}AI 助手 - {{ workspace.name }} - Brightbean{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Agent chat full-height layout */
+    main:has(.agent-main) { padding: 0 !important; overflow: hidden !important; }
+    main:has(.agent-main) > div { overflow: hidden !important; }
+    .agent-main { padding: 0 !important; overflow: hidden; height: 100vh; }
+
+    /* Chat messages area */
+    .chat-messages {
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        scrollbar-color: #E7E5E4 transparent;
+    }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: #E7E5E4; border-radius: 4px; }
+
+    /* Message fade-in animation */
+    .msg-fade-in {
+        animation: msgFadeIn 0.25s ease-out;
+    }
+    @keyframes msgFadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Thinking indicator dots */
+    .thinking-dot {
+        animation: thinkPulse 1.4s infinite ease-in-out both;
+    }
+    .thinking-dot:nth-child(1) { animation-delay: -0.32s; }
+    .thinking-dot:nth-child(2) { animation-delay: -0.16s; }
+    .thinking-dot:nth-child(3) { animation-delay: 0s; }
+    @keyframes thinkPulse {
+        0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+        40% { transform: scale(1); opacity: 1; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="agent-main flex h-full">
+    <!-- Sidebar: conversation list -->
+    <aside class="w-64 bg-stone-50 border-r border-stone-200 flex flex-col flex-shrink-0 hidden md:flex">
+        <div class="p-3 border-b border-stone-200">
+            <form method="post" action="{% url 'agents:new' workspace_id=workspace_id %}">
+                {% csrf_token %}
+                <button type="submit"
+                        class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-semibold text-orange-600 bg-orange-50 border border-orange-200 rounded-lg hover:bg-orange-100 hover:border-orange-300 transition-all duration-150">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    新建对话
+                </button>
+            </form>
+        </div>
+        <div class="flex-1 overflow-y-auto p-2 space-y-1">
+            {% for conv in conversations %}
+            <a href="{% url 'agents:chat' workspace_id=workspace_id conversation_id=conv.id %}"
+               class="block px-3 py-2 rounded-lg text-sm transition-colors duration-150 {% if conv.id == conversation.id %}bg-orange-100 text-orange-800{% else %}text-stone-600 hover:bg-stone-100{% endif %}">
+                <div class="truncate font-medium">{{ conv.title|default:"新对话" }}</div>
+                <div class="text-xs text-stone-400 mt-0.5">{{ conv.updated_at|date:"m-d H:i" }}</div>
+            </a>
+            {% empty %}
+            <p class="text-xs text-stone-400 text-center py-8">暂无对话记录</p>
+            {% endfor %}
+        </div>
+    </aside>
+
+    <!-- Main chat area -->
+    <div class="flex-1 flex flex-col min-w-0 bg-white">
+        <!-- Chat header -->
+        <div class="flex items-center justify-between px-4 py-3 border-b border-stone-200 bg-white">
+            <div class="flex items-center gap-2 min-w-0">
+                <a href="{% url 'agents:index' workspace_id=workspace_id %}"
+                   class="md:hidden p-1 -ml-1 text-stone-400 hover:text-stone-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                </a>
+                <div class="flex items-center gap-2 min-w-0">
+                    <div class="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-rose-400 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <h2 class="text-sm font-semibold text-stone-900 truncate">{{ conversation.title|default:"新对话" }}</h2>
+                </div>
+            </div>
+            <form method="post" action="{% url 'agents:delete' workspace_id=workspace_id conversation_id=conversation.id %}"
+                  class="flex-shrink-0"
+                  onsubmit="return confirm('确定要删除此对话吗？')">
+                {% csrf_token %}
+                <button type="submit" class="p-1.5 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+            </form>
+        </div>
+
+        <!-- Messages area -->
+        <div class="flex-1 overflow-y-auto px-4 py-6 chat-messages" id="chat-messages">
+            {% if messages %}
+                {% for msg in messages %}
+                {% include "agents/partials/message.html" with message=msg %}
+                {% endfor %}
+            {% else %}
+            <!-- Welcome message -->
+            <div class="flex flex-col items-center justify-center h-full text-center px-6">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center mb-5">
+                    <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </div>
+                <h3 class="text-base font-semibold text-stone-900 mb-2">您好！我是 Brightbean AI 助手</h3>
+                <p class="text-sm text-stone-500 max-w-md">
+                    我可以帮您生成社交媒体文案、策划内容主题、优化发布策略。
+                    试试问我：
+                </p>
+                <div class="mt-4 flex flex-wrap gap-2 justify-center">
+                    <button class="suggestion-btn px-3 py-1.5 text-xs font-medium text-stone-600 bg-stone-100 rounded-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 border border-stone-200 transition-all"
+                            data-prompt="帮我写一条 LinkedIn 帖子，关于 AI 在营销中的应用">
+                        🤖 AI 营销帖子
+                    </button>
+                    <button class="suggestion-btn px-3 py-1.5 text-xs font-medium text-stone-600 bg-stone-100 rounded-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 border border-stone-200 transition-all"
+                            data-prompt="给我一些 Instagram 内容创意">
+                        📸 IG 内容创意
+                    </button>
+                    <button class="suggestion-btn px-3 py-1.5 text-xs font-medium text-stone-600 bg-stone-100 rounded-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 border border-stone-200 transition-all"
+                            data-prompt="如何提高社交媒体 engagement？">
+                        📈 提升互动率
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Loading indicator (hidden by default) -->
+            <div id="thinking-indicator" class="flex items-start gap-3 px-4 py-3 msg-fade-in" style="display:none">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-rose-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </div>
+                <div class="bg-stone-50 rounded-2xl rounded-tl-md px-4 py-3 border border-stone-100">
+                    <div class="flex gap-1.5">
+                        <span class="thinking-dot w-2 h-2 bg-orange-400 rounded-full inline-block"></span>
+                        <span class="thinking-dot w-2 h-2 bg-orange-400 rounded-full inline-block"></span>
+                        <span class="thinking-dot w-2 h-2 bg-orange-400 rounded-full inline-block"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input area -->
+        <div class="border-t border-stone-200 px-4 py-3 bg-white">
+            <form id="chat-form"
+                  method="post"
+                  action="{% url 'agents:send_message' workspace_id=workspace_id conversation_id=conversation.id %}"
+                  hx-post="{% url 'agents:send_message' workspace_id=workspace_id conversation_id=conversation.id %}"
+                  hx-target="#chat-messages"
+                  hx-swap="beforeend"
+                  hx-on::before-request="onBeforeSend(event)"
+                  hx-on::after-request="onAfterSend(event)"
+                  hx-on::after-on-load="scrollToBottom()">
+                {% csrf_token %}
+                <div class="flex items-end gap-2">
+                    <div class="flex-1 relative">
+                        <textarea name="content"
+                                  id="msg-input"
+                                  rows="1"
+                                  placeholder="输入消息...按 Enter 发送，Shift+Enter 换行"
+                                  class="w-full resize-none rounded-xl border border-stone-300 bg-stone-50 px-4 py-2.5 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-300 transition-all"
+                                  style="max-height: 200px;"
+                                  oninput="autoResize(this)"
+                                  onkeydown="onEnterKey(event)"></textarea>
+                    </div>
+                    <button type="submit"
+                            id="send-btn"
+                            class="flex-shrink-0 w-10 h-10 rounded-xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white flex items-center justify-center transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- HTMX indicator for the whole page -->
+<div id="agent-spinner" class="htmx-indicator fixed inset-0 bg-black/10 z-50 flex items-center justify-center" style="display:none">
+    <div class="bg-white rounded-xl shadow-lg px-6 py-4 flex items-center gap-3">
+        <div class="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+        <span class="text-sm text-stone-600">AI 思考中...</span>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Auto-resize textarea
+    function autoResize(el) {
+        el.style.height = 'auto';
+        el.style.height = Math.min(el.scrollHeight, 200) + 'px';
+        document.getElementById('send-btn').disabled = el.value.trim().length === 0;
+    }
+
+    // Enter to send, Shift+Enter for newline
+    function onEnterKey(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            const form = e.target.closest('form');
+            if (form && !document.getElementById('send-btn').disabled) {
+                form.dispatchEvent(new Event('submit', { cancelable: true }));
+            }
+        }
+    }
+
+    // Scroll chat to bottom
+    function scrollToBottom() {
+        const container = document.getElementById('chat-messages');
+        setTimeout(() => {
+            container.scrollTop = container.scrollHeight;
+        }, 50);
+    }
+
+    // Before HTMX send: show thinking indicator, hide welcome
+    function onBeforeSend(e) {
+        document.getElementById('thinking-indicator').style.display = 'flex';
+        const welcome = document.querySelector('.flex.flex-col.items-center.justify-center.h-full');
+        if (welcome) welcome.style.display = 'none';
+        document.getElementById('msg-input').value = '';
+        document.getElementById('send-btn').disabled = true;
+        autoResize(document.getElementById('msg-input'));
+    }
+
+    // After HTMX send: hide thinking indicator, scroll
+    function onAfterSend(e) {
+        document.getElementById('thinking-indicator').style.display = 'none';
+        scrollToBottom();
+        document.getElementById('msg-input').focus();
+    }
+
+    // Suggestion buttons - fill input and send
+    document.querySelectorAll('.suggestion-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const input = document.getElementById('msg-input');
+            input.value = this.dataset.prompt;
+            autoResize(input);
+            document.getElementById('send-btn').disabled = false;
+            const form = document.getElementById('chat-form');
+            form.dispatchEvent(new Event('submit', { cancelable: true }));
+        });
+    });
+
+    // Auto-scroll on page load
+    document.addEventListener('DOMContentLoaded', scrollToBottom);
+</script>
+{% endblock %}

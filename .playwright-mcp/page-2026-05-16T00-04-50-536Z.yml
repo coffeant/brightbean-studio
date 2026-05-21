@@ -1,0 +1,137 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "M My Workspace" [ref=e5] [cursor=pointer]:
+        - generic [ref=e6]: M
+        - generic [ref=e7]: My Workspace
+        - img [ref=e8]
+      - button "新建" [ref=e12] [cursor=pointer]:
+        - img [ref=e13]
+        - generic [ref=e15]: 新建
+      - navigation [ref=e16]:
+        - link "发布" [ref=e17] [cursor=pointer]:
+          - /url: /workspace/1b196489-b8a8-446e-bf06-85bab892e55f/calendar/
+          - img [ref=e18]
+          - generic [ref=e20]: 发布
+        - link "创意" [ref=e21] [cursor=pointer]:
+          - /url: /workspace/1b196489-b8a8-446e-bf06-85bab892e55f/create/
+          - img [ref=e22]
+          - generic [ref=e26]: 创意
+        - link "社交收件箱" [ref=e27] [cursor=pointer]:
+          - /url: /workspace/1b196489-b8a8-446e-bf06-85bab892e55f/inbox/
+          - img [ref=e28]
+          - generic [ref=e30]: 社交收件箱
+        - link "通知" [ref=e31] [cursor=pointer]:
+          - /url: /notifications/
+          - img [ref=e32]
+          - generic [ref=e35]: 通知
+        - link "更多频道" [ref=e37] [cursor=pointer]:
+          - /url: /social-accounts/1b196489-b8a8-446e-bf06-85bab892e55f/connect/
+          - img [ref=e39]
+          - generic [ref=e40]: 更多频道
+      - generic [ref=e42]:
+        - button "My Organization test@media-lib.com" [ref=e43] [cursor=pointer]:
+          - img [ref=e45]
+          - generic [ref=e47]:
+            - paragraph [ref=e48]: My Organization
+            - paragraph [ref=e49]: test@media-lib.com
+        - button "收缩侧栏" [ref=e50] [cursor=pointer]:
+          - img [ref=e51]
+    - main [ref=e54]:
+      - generic [ref=e55]:
+        - heading "发布" [level=1] [ref=e56]
+        - generic [ref=e58]:
+          - button "列表" [ref=e59] [cursor=pointer]:
+            - img [ref=e60]
+            - text: 列表
+          - button "日历" [ref=e62] [cursor=pointer]:
+            - img [ref=e63]
+            - text: 日历
+      - generic [ref=e67]:
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - button "队列" [ref=e70] [cursor=pointer]
+            - button "草稿" [ref=e71] [cursor=pointer]
+            - button "审核" [ref=e72] [cursor=pointer]
+            - button "已发送" [ref=e73] [cursor=pointer]
+          - generic [ref=e74]:
+            - generic [ref=e75]:
+              - img
+              - combobox [ref=e76] [cursor=pointer]:
+                - option "所有渠道" [selected]
+            - generic [ref=e77]:
+              - img
+              - combobox [ref=e78] [cursor=pointer]:
+                - option "所有标签" [selected]
+            - generic [ref=e79]:
+              - img
+              - combobox [ref=e80] [cursor=pointer]:
+                - option "Shanghai （工作区）" [selected]
+                - option "Eastern"
+                - option "Central"
+                - option "Mountain"
+                - option "Pacific"
+                - option "UTC"
+                - option "London"
+                - option "Paris"
+                - option "Berlin"
+                - option "Amsterdam"
+                - option "Tokyo"
+                - option "Kolkata"
+                - option "Dubai"
+                - option "Sydney"
+                - option "Auckland"
+                - option "Sao_Paulo"
+                - option "Toronto"
+                - option "Chicago"
+                - option "Denver"
+                - option "Los_Angeles"
+                - option "New_York"
+        - generic [ref=e83]:
+          - img [ref=e85]
+          - heading "欢迎 👋" [level=3] [ref=e104]
+          - paragraph [ref=e105]: 连接渠道以开始发布和管理评论
+          - link "连接渠道" [ref=e106] [cursor=pointer]:
+            - /url: /social-accounts/1b196489-b8a8-446e-bf06-85bab892e55f/connect/
+            - img [ref=e107]
+            - text: 连接渠道
+  - generic [ref=e110]:
+    - generic [ref=e111]:
+      - generic [ref=e112]:
+        - img [ref=e114]
+        - generic [ref=e116]:
+          - generic [ref=e117]: 开始使用
+          - generic [ref=e118]: 已完成 0/4
+      - generic [ref=e119]:
+        - button "最小化" [ref=e121] [cursor=pointer]:
+          - img [ref=e122]
+        - button "关闭清单" [ref=e124] [cursor=pointer]:
+          - img [ref=e125]
+    - link "连接社交账号 关联您的 Instagram、LinkedIn 或其他平台" [ref=e128] [cursor=pointer]:
+      - /url: /social-accounts/1b196489-b8a8-446e-bf06-85bab892e55f/connect/
+      - img [ref=e130]
+      - generic [ref=e133]:
+        - generic [ref=e134]: 连接社交账号
+        - generic [ref=e135]: 关联您的 Instagram、LinkedIn 或其他平台
+      - img [ref=e136]
+    - link "创建您的第一篇帖子 为您的受众起草和排期内容" [ref=e138] [cursor=pointer]:
+      - /url: /workspace/1b196489-b8a8-446e-bf06-85bab892e55f/compose/
+      - img [ref=e140]
+      - generic [ref=e142]:
+        - generic [ref=e143]: 创建您的第一篇帖子
+        - generic [ref=e144]: 为您的受众起草和排期内容
+      - img [ref=e145]
+    - link "创建您的第一个创意 捕捉内容创意以供后续完善" [ref=e147] [cursor=pointer]:
+      - /url: /workspace/1b196489-b8a8-446e-bf06-85bab892e55f/create/
+      - img [ref=e149]
+      - generic [ref=e151]:
+        - generic [ref=e152]: 创建您的第一个创意
+        - generic [ref=e153]: 捕捉内容创意以供后续完善
+      - img [ref=e154]
+    - link "邀请团队成员 添加团队成员以协作管理内容" [ref=e156] [cursor=pointer]:
+      - /url: /members/
+      - img [ref=e158]
+      - generic [ref=e162]:
+        - generic [ref=e163]: 邀请团队成员
+        - generic [ref=e164]: 添加团队成员以协作管理内容
+      - img [ref=e165]
